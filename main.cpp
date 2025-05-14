@@ -1,7 +1,7 @@
 #include<iostream>
 #include<string>
 #include<conio.h>
-#include<locale>
+#include <windows.h>
 #include <cstring>
 
 using namespace std;
@@ -56,7 +56,7 @@ void CadastrarRaca(struct Raca racas[], int &tamanhoRaca, struct Cidade cidades[
 bool ValidarCpf(char cpf[]);
 
 int main() {
-    setlocale(LC_ALL, "portuguese");
+    SetConsoleOutputCP(CP_UTF8);
 
     const int max = 100;
     int tamanhoCidade;
