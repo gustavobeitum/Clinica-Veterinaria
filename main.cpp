@@ -49,10 +49,11 @@ struct Cosulta {
     float valor;
 };
 
-void CadastrarCidade(struct Cidade cidades[], int &tamanho);
-void CadastrarTutor(struct Tutor tutores[], int &tamanhoTutor, struct Cidade cidades[], int tamanhoCidade);
-void CadastrarVeterinario(struct Veterinario veterinarios[], int &tamanhoVeterinario, struct Cidade cidades[], int tamanhoCidade);
-void CadastrarRaca(struct Raca racas[], int &tamanhoRaca, struct Cidade cidades[], int tamanhoCidade);
+void CadastrarCidade(Cidade cidades[], int &tamanho);
+void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int tamanhoCidade);
+void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, Cidade cidades[], int tamanhoCidade);
+void CadastrarRaca(Raca racas[], int &tamanhoRaca);
+bool busca_aleat (Cidade cidades[], int tamanhoCidade, int cod);
 bool ValidarCpf(char cpf[]);
 
 int main() {
@@ -60,21 +61,25 @@ int main() {
 
     const int max = 100;
     int tamanhoCidade;
-    struct Cidade cidades[max];
+    Cidade cidades[max];
     CadastrarCidade(cidades, tamanhoCidade);
 
     int tamanhoTutor;
-    struct Tutor tutores[max];
+    Tutor tutores[max];
     CadastrarTutor(tutores, tamanhoTutor, cidades, tamanhoCidade);
 
     int tamanhoVeterinario;
-    struct Veterinario veterinarios[max];
+    Veterinario veterinarios[max];
     CadastrarVeterinario(veterinarios, tamanhoVeterinario, cidades, tamanhoCidade);
+
+    int tamanhoRaca;
+    Raca racas[max];
+    CadastrarRaca(racas, tamanhoRaca);
 
     return 0;
 }
 
-void CadastrarCidade(struct Cidade cidades[], int &tamanho) {
+void CadastrarCidade(Cidade cidades[], int &tamanho) {
     cout<<"\nCadastrar Cidades (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
     int i = 0;
     for (int saida = 1; saida !=0; i++) {
@@ -98,7 +103,7 @@ void CadastrarCidade(struct Cidade cidades[], int &tamanho) {
     tamanho = i-1;
 }
 
-void CadastrarTutor(struct Tutor tutores[], int &tamanhoTutor, struct Cidade cidades[], int tamanhoCidade) {
+void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int tamanhoCidade) {
     cout << "\nCadastrar Tutores (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
 
     int i = 0;
@@ -124,32 +129,27 @@ void CadastrarTutor(struct Tutor tutores[], int &tamanhoTutor, struct Cidade cid
                     strcpy(tutores[i].cpf , cpf);
                     cpfInvalido = false;
                     cin.ignore();
-                } else cout<<"CPF inválido, insira um CPF válido.\n";
+                } else cout << "CPF inválido, insira um CPF válido.\n";
             }
 
             cout << "Endereço: ";
             cin.getline(tutores[i].endereco, 90);
 
-            bool cidadeInvalida = true;
             int codCidade;
+            bool verificador = false;
 
-            while (cidadeInvalida) {
-                cout << "Código da cidade: ";
+            while (!verificador) {
+                cout << "\nCódigo da cidade: ";
                 cin>>codCidade;
-
-                for(i = 0; i < tamanhoCidade; i++) {
-                    if (codCidade == cidades[i].codigo) {
-                        tutores[i].codigoCidade = codCidade;
-                        cidadeInvalida = false;
-                    } else cout<<"Código de cidade inválido, insira um código válido.\n";
-                }
+                verificador = busca_aleat(cidades, tamanhoCidade, codCidade);
             }
+            tutores[i].codigoCidade = codCidade;
         }else saida = 0;
     }
     tamanhoTutor = i-1;
 }
 
-void CadastrarVeterinario(struct Veterinario veterinarios[], int &tamanhoVeterinario, struct Cidade cidades[], int tamanhoCidade) {
+void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, Cidade cidades[], int tamanhoCidade) {
     cout << "\nCadastrar Veterinários (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
 
     int i = 0;
@@ -166,27 +166,22 @@ void CadastrarVeterinario(struct Veterinario veterinarios[], int &tamanhoVeterin
             cout << "Endereço: ";
             cin.getline(veterinarios[i].endereco, 90);
 
-            bool cidadeInvalida = true;
             int codCidade;
+            bool verificador = false;
 
-            while (cidadeInvalida) {
-                cout << "Código da cidade: ";
+            while (!verificador) {
+                cout << "\nCódigo da cidade: ";
                 cin>>codCidade;
-
-                for(i = 0; i < tamanhoCidade; i++) {
-                    if (codCidade == cidades[i].codigo) {
-                        veterinarios[i].codigoCidade = codCidade;
-                        cidadeInvalida = false;
-                    } else cout<<"Código de cidade inválido, insira um código válido.\n";
-                }
+                verificador = busca_aleat(cidades, tamanhoCidade, codCidade);
             }
+            veterinarios[i].codigoCidade = codCidade;
         }else saida = 0;
     }
     tamanhoVeterinario = i-1;
 }
 
-void CadastrarRaca(struct Raca racas[], int &tamanhoRaca, struct Cidade cidades[], int tamanhoCidade) {
-    cout << "\nCadastrar Veterinários (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
+void CadastrarRaca(Raca racas[], int &tamanhoRaca) {
+    cout << "\nCadastrar Raças (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
 
     int i = 0;
     for (int saida = 1; saida !=0; i++) {
@@ -196,11 +191,61 @@ void CadastrarRaca(struct Raca racas[], int &tamanhoRaca, struct Cidade cidades[
         cin.ignore();
 
         if (racas[i].codigo > 0) {
-            cout << "Nome do raca: ";
+            cout << "Nome do raça: ";
             cin.getline(racas[i].descricao, 50);
         } else saida = 0;
     }
     tamanhoRaca = i-1;
+}
+
+void CadastrarAnimal(Animal animais[], int tamanhoAnimal, Raca racas[], int tamanhoRaca, Tutor tutores[], int tamanhoTutor) {
+    cout << "\nCadastrar Animais (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
+
+    int i = 0;
+    for (int saida = 1; saida !=0; i++) {
+        cout << "Código do animal: ";
+        cin >> animais[i].codigo;
+
+        cin.ignore();
+
+        if (animais[i].codigo > 0) {
+            cout << "Nome do animal: ";
+            cin.getline(animais[i].nome, 30);
+
+            bool racaInvalida = true;
+            int codRaca;
+
+            while (racaInvalida) {
+                cout << "Código da raça: ";
+                cin>>codRaca;
+
+                for(i = 0; i < tamanhoRaca; i++) {
+                    if (codRaca == racas[i].codigo) {
+                        animais[i].codigoRaca = codRaca;
+                        racaInvalida = false;
+                    } else cout<<"Código de raça inválido, insira um código válido.\n";
+                }
+            }
+
+        } else saida = 0;
+    }
+    tamanhoAnimal = i-1;
+}
+
+bool busca_aleat (Cidade cidades[], int tamanhoCidade, int cod){
+    int i = 0, f = tamanhoCidade;
+    int m = (i + f) / 2;
+    for (; f > i && cod != cidades[m].codigo; m = (i + f) / 2){
+        if (cod > cidades[m].codigo)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == cidades[m].codigo) return true;
+    else {
+        cout << "Código de cidade inválido, insira um código válido.\n";
+        return false;
+    }
 }
 
 bool ValidarCpf(char cpf[]) {
