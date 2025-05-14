@@ -53,7 +53,9 @@ void CadastrarCidade(Cidade cidades[], int &tamanho);
 void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int tamanhoCidade);
 void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, Cidade cidades[], int tamanhoCidade);
 void CadastrarRaca(Raca racas[], int &tamanhoRaca);
-bool busca_aleat (Cidade cidades[], int tamanhoCidade, int cod);
+bool BuscarCidade (Cidade cidades[], int tamanhoCidade, int cod);
+bool BuscarRaca (Raca racas[], int tamanhoraca, int cod);
+bool BuscarTutor (Tutor tutores[], int tamanhoTutor, int cod);
 bool ValidarCpf(char cpf[]);
 
 int main() {
@@ -141,7 +143,7 @@ void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int ta
             while (!verificador) {
                 cout << "\nCódigo da cidade: ";
                 cin>>codCidade;
-                verificador = busca_aleat(cidades, tamanhoCidade, codCidade);
+                verificador = BuscarCidade(cidades, tamanhoCidade, codCidade);
             }
             tutores[i].codigoCidade = codCidade;
         }else saida = 0;
@@ -172,7 +174,7 @@ void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, C
             while (!verificador) {
                 cout << "\nCódigo da cidade: ";
                 cin>>codCidade;
-                verificador = busca_aleat(cidades, tamanhoCidade, codCidade);
+                verificador = BuscarCidade(cidades, tamanhoCidade, codCidade);
             }
             veterinarios[i].codigoCidade = codCidade;
         }else saida = 0;
@@ -212,27 +214,38 @@ void CadastrarAnimal(Animal animais[], int tamanhoAnimal, Raca racas[], int tama
             cout << "Nome do animal: ";
             cin.getline(animais[i].nome, 30);
 
-            bool racaInvalida = true;
-            int codRaca;
+            int codigoAux;
+            bool verificador = false;
 
-            while (racaInvalida) {
-                cout << "Código da raça: ";
-                cin>>codRaca;
-
-                for(i = 0; i < tamanhoRaca; i++) {
-                    if (codRaca == racas[i].codigo) {
-                        animais[i].codigoRaca = codRaca;
-                        racaInvalida = false;
-                    } else cout<<"Código de raça inválido, insira um código válido.\n";
-                }
+            while (!verificador) {
+                cout << "\nCódigo da raça: ";
+                cin>>codigoAux;
+                verificador = BuscarRaca(racas, tamanhoRaca, codigoAux);
             }
+            animais[i].codigoRaca = codigoAux;
 
+            cout << "Idade do animal: ";
+            cin >> animais[i].idade;
+
+            cout << "Peso do animal: ";
+            cin >> animais[i].peso;
+
+            cin.ignore();
+
+            verificador = false;
+
+            while (!verificador) {
+                cout << "\nCódigo da raça: ";
+                cin>>codigoAux;
+                verificador = BuscarTutor(tutores, tamanhoTutor, codigoAux);
+            }
+            animais[i].codigoTutor = codigoAux;
         } else saida = 0;
     }
     tamanhoAnimal = i-1;
 }
 
-bool busca_aleat (Cidade cidades[], int tamanhoCidade, int cod){
+bool BuscarCidade (Cidade cidades[], int tamanhoCidade, int cod){
     int i = 0, f = tamanhoCidade;
     int m = (i + f) / 2;
     for (; f > i && cod != cidades[m].codigo; m = (i + f) / 2){
@@ -242,6 +255,38 @@ bool busca_aleat (Cidade cidades[], int tamanhoCidade, int cod){
             f = m - 1;
     }
     if (cod == cidades[m].codigo) return true;
+    else {
+        cout << "Código de cidade inválido, insira um código válido.\n";
+        return false;
+    }
+}
+
+bool BuscarRaca (Raca racas[], int tamanhoraca, int cod){
+    int i = 0, f = tamanhoraca;
+    int m = (i + f) / 2;
+    for (; f > i && cod != racas[m].codigo; m = (i + f) / 2){
+        if (cod > racas[m].codigo)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == racas[m].codigo) return true;
+    else {
+        cout << "Código de cidade inválido, insira um código válido.\n";
+        return false;
+    }
+}
+
+bool BuscarTutor (Tutor tutores[], int tamanhoTutor, int cod){
+    int i = 0, f = tamanhoTutor;
+    int m = (i + f) / 2;
+    for (; f > i && cod != tutores[m].codigo; m = (i + f) / 2){
+        if (cod > tutores[m].codigo)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == tutores[m].codigo) return true;
     else {
         cout << "Código de cidade inválido, insira um código válido.\n";
         return false;
