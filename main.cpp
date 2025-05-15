@@ -41,7 +41,7 @@ struct Animal {
     int codigoTutor;
 };
 
-struct Cosulta {
+struct Consulta {
     int codigo;
     int codigoAnimal;
     int codigoVeterinario;
@@ -53,15 +53,20 @@ void CadastrarCidade(Cidade cidades[], int &tamanho);
 void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int tamanhoCidade);
 void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, Cidade cidades[], int tamanhoCidade);
 void CadastrarRaca(Raca racas[], int &tamanhoRaca);
+void CadastrarAnimal(Animal animais[], int &tamanhoAnimal, Raca racas[], int tamanhoRaca, Tutor tutores[], int tamanhoTutor);
+void RegistrarConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario);
 bool BuscarCidade (Cidade cidades[], int tamanhoCidade, int cod);
 bool BuscarRaca (Raca racas[], int tamanhoraca, int cod);
 bool BuscarTutor (Tutor tutores[], int tamanhoTutor, int cod);
+bool BuscarAnimal (Animal animais[], int tamanhoAnimal, int cod);
+bool BuscarVeterinario (Veterinario veterinarios[], int tamanhoVeterinario, int cod);
+void InserirTutor (Tutor tutores[], int tamanhoTutor, Tutor inserirTutores[], int tamanhoInserirTutor, Tutor tutoresAtualizada[], int &tamanhoAtualizadaTutor);
 bool ValidarCpf(char cpf[]);
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
 
-    const int max = 100;
+    int max = 100;
     int tamanhoCidade;
     Cidade cidades[max];
     CadastrarCidade(cidades, tamanhoCidade);
@@ -78,11 +83,27 @@ int main() {
     Raca racas[max];
     CadastrarRaca(racas, tamanhoRaca);
 
+    int tamanhoAnimal;
+    Animal animais[max];
+    CadastrarAnimal(animais, tamanhoAnimal, racas, tamanhoRaca, tutores, tamanhoTutor);
+
+    int tamanhoConsulta;
+    Consulta consultas[max];
+    RegistrarConsulta(consultas, tamanhoConsulta, animais, tamanhoAnimal, veterinarios, tamanhoVeterinario);
+
+    int tamanhoInserirTutor;
+    Tutor inserirTutores[max];
+    CadastrarTutor(inserirTutores, tamanhoInserirTutor, cidades, tamanhoCidade);
+
+    int tamanhoAtualizadaTutor;
+    Tutor tutoresAtualizada[tamanhoTutor + tamanhoInserirTutor];
+    InserirTutor(tutores, tamanhoTutor, inserirTutores, tamanhoInserirTutor, tutoresAtualizada, tamanhoAtualizadaTutor);
+
     return 0;
 }
 
-void CadastrarCidade(Cidade cidades[], int &tamanho) {
-    cout<<"\nCadastrar Cidades (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
+void CadastrarCidade(Cidade cidades[], int &tamanhoCidade) {
+    cout<<"\nCadastrar Cidades (Para finalizar os cadastros, digite 0 no campo código): "<<endl;
     int i = 0;
     for (int saida = 1; saida !=0; i++) {
 
@@ -102,11 +123,11 @@ void CadastrarCidade(Cidade cidades[], int &tamanho) {
             saida = 0;
         }
     }
-    tamanho = i-1;
+    tamanhoCidade = i-1;
 }
 
 void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int tamanhoCidade) {
-    cout << "\nCadastrar Tutores (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
+    cout << "\nCadastrar Tutores (Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
     int i = 0;
     for (int saida = 1; saida !=0; i++) {
@@ -137,22 +158,22 @@ void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int ta
             cout << "Endereço: ";
             cin.getline(tutores[i].endereco, 90);
 
-            int codCidade;
+            int codigoAux;
             bool verificador = false;
 
             while (!verificador) {
                 cout << "\nCódigo da cidade: ";
-                cin>>codCidade;
-                verificador = BuscarCidade(cidades, tamanhoCidade, codCidade);
+                cin>>codigoAux;
+                verificador = BuscarCidade(cidades, tamanhoCidade, codigoAux);
             }
-            tutores[i].codigoCidade = codCidade;
+            tutores[i].codigoCidade = cidades[codigoAux].codigo;
         }else saida = 0;
     }
     tamanhoTutor = i-1;
 }
 
 void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, Cidade cidades[], int tamanhoCidade) {
-    cout << "\nCadastrar Veterinários (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
+    cout << "\nCadastrar Veterinários (Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
     int i = 0;
     for (int saida = 1; saida !=0; i++) {
@@ -168,22 +189,22 @@ void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, C
             cout << "Endereço: ";
             cin.getline(veterinarios[i].endereco, 90);
 
-            int codCidade;
+            int codigoAux;
             bool verificador = false;
 
             while (!verificador) {
                 cout << "\nCódigo da cidade: ";
-                cin>>codCidade;
-                verificador = BuscarCidade(cidades, tamanhoCidade, codCidade);
+                cin>>codigoAux;
+                verificador = BuscarCidade(cidades, tamanhoCidade, codigoAux);
             }
-            veterinarios[i].codigoCidade = codCidade;
+            veterinarios[i].codigoCidade = cidades[codigoAux].codigo;
         }else saida = 0;
     }
     tamanhoVeterinario = i-1;
 }
 
 void CadastrarRaca(Raca racas[], int &tamanhoRaca) {
-    cout << "\nCadastrar Raças (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
+    cout << "\nCadastrar Raças (Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
     int i = 0;
     for (int saida = 1; saida !=0; i++) {
@@ -200,8 +221,8 @@ void CadastrarRaca(Raca racas[], int &tamanhoRaca) {
     tamanhoRaca = i-1;
 }
 
-void CadastrarAnimal(Animal animais[], int tamanhoAnimal, Raca racas[], int tamanhoRaca, Tutor tutores[], int tamanhoTutor) {
-    cout << "\nCadastrar Animais (Para finalizar o cadastro, digite 0 no campo código): "<<endl;
+void CadastrarAnimal(Animal animais[], int &tamanhoAnimal, Raca racas[], int tamanhoRaca, Tutor tutores[], int tamanhoTutor) {
+    cout << "\nCadastrar Animais (Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
     int i = 0;
     for (int saida = 1; saida !=0; i++) {
@@ -222,7 +243,7 @@ void CadastrarAnimal(Animal animais[], int tamanhoAnimal, Raca racas[], int tama
                 cin>>codigoAux;
                 verificador = BuscarRaca(racas, tamanhoRaca, codigoAux);
             }
-            animais[i].codigoRaca = codigoAux;
+            animais[i].codigoRaca = racas[codigoAux].codigo;
 
             cout << "Idade do animal: ";
             cin >> animais[i].idade;
@@ -239,13 +260,50 @@ void CadastrarAnimal(Animal animais[], int tamanhoAnimal, Raca racas[], int tama
                 cin>>codigoAux;
                 verificador = BuscarTutor(tutores, tamanhoTutor, codigoAux);
             }
-            animais[i].codigoTutor = codigoAux;
+            animais[i].codigoTutor = tutores[codigoAux].codigo;
         } else saida = 0;
     }
     tamanhoAnimal = i-1;
 }
 
-bool BuscarCidade (Cidade cidades[], int tamanhoCidade, int cod){
+void RegistrarConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario) {
+    cout << "\nRegistrar Consulta (Para finalizar os registros, digite 0 no campo código): "<<endl;
+
+    int i = 0;
+    for (int saida = 1; saida !=0; i++) {
+        cout << "Código da consulta: ";
+        cin >> consultas[i].codigo;
+
+        cin.ignore();
+
+        if (consultas[i].codigo > 0) {
+
+            int codigoAux;
+            bool verificador = false;
+
+            while (!verificador) {
+                cout << "\nCódigo do animal: ";
+                cin>>codigoAux;
+                verificador = BuscarAnimal(animais, tamanhoAnimal, codigoAux);
+            }
+            animais[i].codigoRaca = animais[codigoAux].codigo;
+
+            verificador = false;
+
+            while (!verificador) {
+                cout << "\nCódigo do veterinário: ";
+                cin>>codigoAux;
+                verificador = BuscarVeterinario(veterinarios, tamanhoVeterinario, codigoAux);
+            }
+            animais[i].codigoRaca = veterinarios[codigoAux].codigo;
+
+
+        }else saida = 0;
+    }
+    tamanhoConsulta = i-1;
+}
+
+bool BuscarCidade (Cidade cidades[], int tamanhoCidade, int &cod){
     int i = 0, f = tamanhoCidade;
     int m = (i + f) / 2;
     for (; f > i && cod != cidades[m].codigo; m = (i + f) / 2){
@@ -254,14 +312,17 @@ bool BuscarCidade (Cidade cidades[], int tamanhoCidade, int cod){
         else
             f = m - 1;
     }
-    if (cod == cidades[m].codigo) return true;
+    if (cod == cidades[m].codigo) {
+        cod = m;
+        return true;
+    }
     else {
-        cout << "Código de cidade inválido, insira um código válido.\n";
+        cout << "Código inválido, insira um código válido.\n";
         return false;
     }
 }
 
-bool BuscarRaca (Raca racas[], int tamanhoraca, int cod){
+bool BuscarRaca (Raca racas[], int tamanhoraca, int &cod){
     int i = 0, f = tamanhoraca;
     int m = (i + f) / 2;
     for (; f > i && cod != racas[m].codigo; m = (i + f) / 2){
@@ -270,14 +331,17 @@ bool BuscarRaca (Raca racas[], int tamanhoraca, int cod){
         else
             f = m - 1;
     }
-    if (cod == racas[m].codigo) return true;
+    if (cod == racas[m].codigo) {
+        cod = m;
+        return true;
+    }
     else {
-        cout << "Código de cidade inválido, insira um código válido.\n";
+        cout << "Código inválido, insira um código válido.\n";
         return false;
     }
 }
 
-bool BuscarTutor (Tutor tutores[], int tamanhoTutor, int cod){
+bool BuscarTutor (Tutor tutores[], int tamanhoTutor, int &cod){
     int i = 0, f = tamanhoTutor;
     int m = (i + f) / 2;
     for (; f > i && cod != tutores[m].codigo; m = (i + f) / 2){
@@ -286,11 +350,93 @@ bool BuscarTutor (Tutor tutores[], int tamanhoTutor, int cod){
         else
             f = m - 1;
     }
-    if (cod == tutores[m].codigo) return true;
+    if (cod == tutores[m].codigo) {
+        cod = m;
+        return true;
+    }
     else {
-        cout << "Código de cidade inválido, insira um código válido.\n";
+        cout << "Código inválido, insira um código válido.\n";
         return false;
     }
+}
+
+bool BuscarAnimal (Animal animais[], int tamanhoAnimal, int &cod) {
+    int i = 0, f = tamanhoAnimal;
+    int m = (i + f) / 2;
+    for (; f > i && cod != animais[m].codigo; m = (i + f) / 2){
+        if (cod > animais[m].codigo)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == animais[m].codigo) {
+        cod = m;
+        return true;
+    }
+    else {
+        cout << "Código inválido, insira um código válido.\n";
+        return false;
+    }
+}
+
+bool BuscarVeterinario (Veterinario veterinarios[], int tamanhoVeterinario, int &cod) {
+    int i = 0, f = tamanhoVeterinario;
+    int m = (i + f) / 2;
+    for (; f > i && cod != veterinarios[m].codigo; m = (i + f) / 2){
+        if (cod > veterinarios[m].codigo)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == veterinarios[m].codigo) {
+        cod = m;
+        return true;
+    }
+    else {
+        cout << "Código inválido, insira um código válido.\n";
+        return false;
+    }
+}
+
+void InserirTutor (Tutor tutores[], int tamanhoTutor, Tutor inserirTutores[], int tamanhoInserirTutor, Tutor tutoresAtualizada[], int &tamanhoAtualizadaTutor){
+    int i = 0, j = 0, k = 0;
+    for (;i < tamanhoTutor && j < tamanhoInserirTutor;k++){
+        if (tutores[i].codigo < inserirTutores[j].codigo){
+            tutoresAtualizada[k].codigo = tutores[i].codigo;
+            strcpy (tutoresAtualizada[k].nome,tutores[i].nome);
+            strcpy (tutoresAtualizada[k].cpf,tutores[i].cpf);
+            strcpy (tutoresAtualizada[k].endereco,tutores[i].endereco);
+            tutoresAtualizada[k].codigoCidade = tutores[i].codigoCidade;
+            i++;
+        }
+        else {
+            tutoresAtualizada[k].codigo = inserirTutores[j].codigo;
+            strcpy (tutoresAtualizada[k].nome,inserirTutores[j].nome);
+            strcpy (tutoresAtualizada[k].cpf,inserirTutores[j].cpf);
+            strcpy (tutoresAtualizada[k].endereco,inserirTutores[j].endereco);
+            tutoresAtualizada[k].codigoCidade = inserirTutores[j].codigoCidade;
+            j++;
+        }
+    }
+    while (i < tamanhoTutor){
+        tutoresAtualizada[k].codigo = tutores[i].codigo;
+        strcpy (tutoresAtualizada[k].nome,tutores[i].nome);
+         strcpy (tutoresAtualizada[k].cpf,tutores[i].cpf);
+         strcpy (tutoresAtualizada[k].endereco,tutores[i].endereco);
+         tutoresAtualizada[k].codigoCidade = tutores[i].codigoCidade;
+         i++;
+         k++;
+     }
+    while (j < tamanhoInserirTutor){
+         tutoresAtualizada[k].codigo = inserirTutores[j].codigo;
+         strcpy (tutoresAtualizada[k].nome,inserirTutores[j].nome);
+         strcpy (tutoresAtualizada[k].cpf,inserirTutores[j].cpf);
+         strcpy (tutoresAtualizada[k].endereco,inserirTutores[j].endereco);
+         tutoresAtualizada[k].codigoCidade = inserirTutores[j].codigoCidade;
+         j++;
+         k++;
+    }
+    tamanhoAtualizadaTutor = k;
 }
 
 bool ValidarCpf(char cpf[]) {
