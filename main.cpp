@@ -4,6 +4,8 @@
 #include <windows.h>
 #include <cstring>
 #include <cstdlib>
+#include <sstream>
+#include <cctype>
 
 using namespace std;
 
@@ -69,8 +71,10 @@ void InserirAnimais(Animal animais[], int &tamanhoAnimal, Animal inserirAnimal[]
 void InserirConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario, Raca racas[], int tamanhoRaca, Cidade cidades[], int tamanhoCidade, Tutor tutores[], int tamanhoTutor);
 
 void PesquisarConsultaPorData(Consulta consultas[], int tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario);
+void PesquisarConsultaPorVeterinarioEData(Consulta consultas[], int tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario);
 
 bool ValidarCpf(char cpf[]);
+bool ForInteiro(string dado, int &codigo);
 
 void Menu();
 
@@ -78,77 +82,101 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
 
     int max = 50;
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\\
-    //1
-    int tamanhoCidade;
+    /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+    int tamanhoCidade = 0;
     Cidade cidades[max];
     CadastrarCidade(cidades, tamanhoCidade);
-    //2
-    int tamanhoTutor;
+
+    int tamanhoTutor = 0;
     Tutor tutores[max];
 	CadastrarTutor(tutores, tamanhoTutor, cidades, tamanhoCidade);
-    //3
-    int tamanhoVeterinario;
+
+    int tamanhoVeterinario = 0;
     Veterinario veterinarios[max];
 	CadastrarVeterinario(veterinarios, tamanhoVeterinario, cidades, tamanhoCidade);
-    //4
-    int tamanhoRaca;
+
+    int tamanhoRaca = 0;
     Raca racas[max];
 	CadastrarRaca(racas, tamanhoRaca);
-    //5
-    int tamanhoAnimal;
+
+    int tamanhoAnimal = 0;
     Animal animais[max];
 	CadastrarAnimal(animais, tamanhoAnimal, racas, tamanhoRaca, tutores, tamanhoTutor, cidades, tamanhoCidade);
-    //6
-    int tamanhoConsulta;
+
+    int tamanhoConsulta = 0;
     Consulta consultas[max];
 	CadastrarConsulta(consultas, tamanhoConsulta, animais, tamanhoAnimal, veterinarios, tamanhoVeterinario);
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\\
+    /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
     int opcao = 0;
 
-
-    while (opcao != 5) {
+    while (opcao != 6) {
         Menu();
         cin >> opcao;
         switch(opcao) {
+            //Cadastrar Tutor
             case 1: {
-                int tamanhoInserirTutor;
+                //Cadastra tutor
+                int tamanhoInserirTutor = 0;
                 Tutor inserirTutores[max];
                 CadastrarTutor(inserirTutores, tamanhoInserirTutor, cidades, tamanhoCidade);
-
-                int tamanhoAtualizadaTutor;
+                //Atualiza o vetor de tutor
+                int tamanhoAtualizadaTutor = 0;
                 Tutor tutoresAtualizada[tamanhoTutor + tamanhoInserirTutor];
                 InserirTutor(tutores, tamanhoTutor, inserirTutores, tamanhoInserirTutor, tutoresAtualizada, tamanhoAtualizadaTutor);
 
                 break;
             }
-
+            //Cadastrar Animal
             case 2: {
-                int tamanhoInserirAnimal;
-                Animal inserirAnimal[max];
-                CadastrarAnimal(inserirAnimal, tamanhoInserirAnimal, racas, tamanhoRaca, tutores, tamanhoTutor, cidades, tamanhoCidade);
-
-                int tamanhoAtualizadaAnimal;
-                Animal animaisAtualizada[tamanhoAnimal + tamanhoInserirAnimal];
-                InserirAnimais(animais, tamanhoAnimal, inserirAnimal, tamanhoInserirAnimal, animaisAtualizada,  tamanhoAtualizadaAnimal);
-
+                //Verifica se já possui tutor cadstrado para cadastrar um animal
+                if (tamanhoTutor > 0) {
+                    //Cadastra animal
+                    int tamanhoInserirAnimal = 0;
+                    Animal inserirAnimal[max];
+                    CadastrarAnimal(inserirAnimal, tamanhoInserirAnimal, racas, tamanhoRaca, tutores, tamanhoTutor, cidades, tamanhoCidade);
+                    //Atualiza o vetor de animal
+                    int tamanhoAtualizadaAnimal = 0;
+                    Animal animaisAtualizada[tamanhoAnimal + tamanhoInserirAnimal];
+                    InserirAnimais(animais, tamanhoAnimal, inserirAnimal, tamanhoInserirAnimal, animaisAtualizada,  tamanhoAtualizadaAnimal);
+                } else {
+                    system("cls");
+                    cout << "\nCadastre um tutor primeiro"<< endl;
+                    cout << "\nClique ENTER para voltar ao menu.";
+                    _getch();
+                }
                 break;
             }
-
+            //Cadastrar uma Consulta
             case 3: {
-                InserirConsulta(consultas, tamanhoConsulta, animais, tamanhoAnimal, veterinarios, tamanhoVeterinario, racas, tamanhoRaca, cidades, tamanhoCidade, tutores, tamanhoTutor);
+                //Verifica se já possui animal cadstrado para cadastrar uma consulta
+                if (tamanhoAnimal > 0) {
+                    //Insere uma consulta no vetor de consultas depois da ultima posição
+                    InserirConsulta(consultas, tamanhoConsulta, animais, tamanhoAnimal, veterinarios, tamanhoVeterinario, racas, tamanhoRaca, cidades, tamanhoCidade, tutores, tamanhoTutor);
+                } else {
+                    system("cls");
+                    cout << "\nCadastre um animal primeiro"<< endl;
+                    cout << "\nClique ENTER para voltar ao menu.";
+                    _getch();
+                }
                 break;
             }
-
+            //Pesquisar Consultas de acordo com Datas
             case 4: {
                 PesquisarConsultaPorData(consultas, tamanhoConsulta,animais, tamanhoAnimal, veterinarios, tamanhoVeterinario);
                 break;
             }
-
+            //Pesquisar Consultas de acordo com o Veterinario e Datas
             case 5: {
+                PesquisarConsultaPorVeterinarioEData(consultas, tamanhoConsulta, animais, tamanhoAnimal, veterinarios, tamanhoVeterinario);
+                break;
+            }
+            //Sai do programa
+            case 6: {
                 system("cls");
                 cout << "Saindo do programa...\n";
+                Sleep(2000);
+                exit(0);
                 break;
             }
 
@@ -164,80 +192,101 @@ int main() {
 void Menu() {
     system("cls");
     cout << "\n===== MENU PRINCIPAL =====\n";
-    cout << "1. Adicionar novo Tutor\n";
-    cout << "2. Adicionar novo Animal\n";
+    cout << "1. Cadastrar novo Tutor\n";
+    cout << "2. Cadastrar novo Animal\n";
     cout << "3. Cadastrar nova Consulta\n";
     cout << "4. Pesquisar Consulta por Data\n";
-    cout << "5. Sair\n";
+    cout << "5. Pesquisar Consulta por Veterinário\n";
+    cout << "6. Sair\n";
     cout << "Escolha uma opção: ";
 }
 
 void CadastrarCidade(Cidade cidades[], int &tamanhoCidade) {
-    system("cls");
-    cout<<"\t------Cadastrar Cidades------ \n(Para finalizar os cadastros, digite 0 no campo código): "<<endl;
-    int i = 0;
-    int codigo;
-    for (int saida = 1; saida !=0; i++) {
 
-        int codigoAux;
+    system("cls");
+
+    int codigo, codigoAux;
+    string entrada;
+
+    cout<<"\t------Cadastrar Cidades------ \n(Para finalizar os cadastros, digite 0 no campo código): "<<endl;
+
+    for (int saida = 1; saida !=0; tamanhoCidade++) {
+
         bool verificador = false;
 
         while (!verificador) {
             cout<<"Código da cidade: ";
-            cin>>codigo;
-            codigoAux = codigo;
-            if (BuscarCidade(cidades, tamanhoCidade, codigoAux) && codigo > 0) {
-                cout << "Código já utilizado, por favor insira um código não utilizado." << endl;
+            cin>>entrada;
+            if (ForInteiro(entrada, codigo)) {
+                codigoAux = codigo;
+                if (tamanhoCidade == 0 && codigo == 0) {
+                    cout << "\nPor favor, insira pelo menos uma cidade." << endl;
+                    cout << "\n";
+                    verificador = false;
+                }
+                else if (BuscarCidade(cidades, tamanhoCidade, codigoAux) && codigo > 0) {
+                    cout << "\nCódigo já utilizado, por favor insira um código não utilizado" << endl;
+                    cout << "\n";
+                } else verificador = true;
+            } else {
+                cout << "\nEntrada inválida, digite apenas números inteiros" << endl;
                 cout << "\n";
-            } else verificador = true;
+                verificador = false;
+            }
         }
 
         cin.ignore();
 
         if (codigo > 0) {
-            cidades[i].codigo = codigo;
+            cidades[tamanhoCidade].codigo = codigo;
 
             cout<<"Cidade: ";
-            cin.getline(cidades[i].nome, 70);
+            cin.getline(cidades[tamanhoCidade].nome, 70);
 
             cout<<"UF: ";
-            cin.getline(cidades[i].uf, 3);
+            cin.getline(cidades[tamanhoCidade].uf, 3);
             cout<<"\n";
-        }else {
-            saida = 0;
-        }
+        } else saida = 0;
     }
-    tamanhoCidade = i-1;
+    tamanhoCidade = tamanhoCidade - 1;
 }
 
 void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int tamanhoCidade) {
+
     system("cls");
+
+    int codigo, codigoAux;
+    string entrada;
+
     cout << "\t------Cadastrar Tutores------ \n(Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
-    int i = 0;
-    int codigo;
-    for (int saida = 1; saida !=0; i++) {
+    for (int saida = 1; saida !=0; tamanhoTutor++) {
 
-        int codigoAux;
         bool verificador = false;
 
         while (!verificador) {
             cout<<"Código de tutor: ";
-            cin>>codigo;
-            codigoAux = codigo;
-            if (BuscarTutor(tutores, tamanhoTutor, codigoAux) && codigo > 0) {
-                cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+            cin>>entrada;
+            if (ForInteiro(entrada, codigo)) {
+                codigoAux = codigo;
+                if (BuscarTutor(tutores, tamanhoTutor, codigoAux) && codigo > 0) {
+                    cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+                    cout << "\n";
+                } else verificador = true;
+            } else {
+                cout << "\nEntrada inválida, digite apenas números inteiros." << endl;
                 cout << "\n";
-            } else verificador = true;
+                verificador = false;
+            }
         }
 
         cin.ignore();
 
         if (codigo > 0) {
-            tutores[i].codigo = codigo;
+            tutores[tamanhoTutor].codigo = codigo;
 
             cout << "Nome do tutor: ";
-            cin.getline(tutores[i].nome, 70);
+            cin.getline(tutores[tamanhoTutor].nome, 70);
 
             bool cpfInvalido = true;
             char cpf[12];
@@ -246,14 +295,14 @@ void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int ta
                 cout << "CPF (somente números, 11 dígitos): ";
                 cin >> cpf;
                 if (ValidarCpf(cpf)) {
-                    strcpy(tutores[i].cpf , cpf);
+                    strcpy(tutores[tamanhoTutor].cpf , cpf);
                     cpfInvalido = false;
                     cin.ignore();
                 } else cout << "CPF inválido, insira um CPF válido.\n";
             }
 
             cout << "Endereço: ";
-            cin.getline(tutores[i].endereco, 90);
+            cin.getline(tutores[tamanhoTutor].endereco, 90);
 
             verificador = false;
 
@@ -263,49 +312,60 @@ void CadastrarTutor(Tutor tutores[], int &tamanhoTutor, Cidade cidades[], int ta
                 verificador = BuscarCidade(cidades, tamanhoCidade, codigoAux);
                 if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
             }
-            tutores[i].codigoCidade = cidades[codigoAux].codigo;
+            tutores[tamanhoTutor].codigoCidade = cidades[codigoAux].codigo;
+
             cout << "Cidade: "<<cidades[codigoAux].nome<<endl;
             cout << "UF: "<<cidades[codigoAux].uf<<endl;
-
             cout<<"\n";
-        }else {
-            saida = 0;
-        }
+        } else saida = 0;
     }
-    tamanhoTutor = i-1;
+    tamanhoTutor = tamanhoTutor - 1;
 }
 
 void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, Cidade cidades[], int tamanhoCidade) {
+
     system("cls");
+
+    int codigo, codigoAux;
+    string entrada;
+
     cout << "\t------Cadastrar Veterinários------ \n(Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
-    int i = 0;
-    int codigo;
-    for (int saida = 1; saida !=0; i++) {
+    for (int saida = 1; saida !=0; tamanhoVeterinario++) {
 
-        int codigoAux;
         bool verificador = false;
 
         while (!verificador) {
             cout<<"Código do veterinario: ";
-            cin>>codigo;
-            codigoAux = codigo;
-            if (BuscarVeterinario(veterinarios, tamanhoVeterinario, codigoAux) && codigo > 0) {
-                cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+            cin>>entrada;
+            if (ForInteiro(entrada, codigo)) {
+                codigoAux = codigo;
+                if (tamanhoVeterinario == 0 && codigo == 0) {
+                    cout << "\nPor favor, insira pelo menos os dados de um veterinário." << endl;
+                    cout << "\n";
+                    verificador = false;
+                }
+                else if (BuscarVeterinario(veterinarios, tamanhoVeterinario, codigoAux) && codigo > 0) {
+                    cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+                    cout << "\n";
+                } else verificador = true;
+            } else {
+                cout << "\nEntrada inválida, digite apenas números inteiros." << endl;
                 cout << "\n";
-            } else verificador = true;
+                verificador = false;
+            }
         }
 
         cin.ignore();
 
         if (codigo > 0) {
-            veterinarios[i].codigo = codigo;
+            veterinarios[tamanhoVeterinario].codigo = codigo;
 
             cout << "Nome do veterinário: ";
-            cin.getline(veterinarios[i].nome, 70);
+            cin.getline(veterinarios[tamanhoVeterinario].nome, 70);
 
             cout << "Endereço: ";
-            cin.getline(veterinarios[i].endereco, 90);
+            cin.getline(veterinarios[tamanhoVeterinario].endereco, 90);
 
             verificador = false;
 
@@ -315,73 +375,97 @@ void CadastrarVeterinario(Veterinario veterinarios[], int &tamanhoVeterinario, C
                 verificador = BuscarCidade(cidades, tamanhoCidade, codigoAux);
                 if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
             }
-            veterinarios[i].codigoCidade = cidades[codigoAux].codigo;
+            veterinarios[tamanhoVeterinario].codigoCidade = cidades[codigoAux].codigo;
             cout << "\n";
         }else saida = 0;
     }
-    tamanhoVeterinario = i-1;
+    tamanhoVeterinario = tamanhoVeterinario - 1;
 }
 
 void CadastrarRaca(Raca racas[], int &tamanhoRaca) {
+
     system("cls");
+
+    int codigo, codigoAux;
+    string entrada;
+
     cout << "\t------Cadastrar Raças------ \n(Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
-    int i = 0;
-    int codigo;
-    for (int saida = 1; saida !=0; i++) {
+    for (int saida = 1; saida !=0; tamanhoRaca++) {
 
-        int codigoAux;
         bool verificador = false;
 
         while (!verificador) {
             cout<<"Código da raça: ";
-            cin>>codigo;
-            codigoAux = codigo;
-            if (BuscarRaca(racas, tamanhoRaca, codigoAux) && codigo > 0) {
-                cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+            cin>>entrada;
+            if (ForInteiro(entrada, codigo)) {
+                codigoAux = codigo;
+                if (tamanhoRaca == 0 && codigo == 0) {
+                    cout << "\nPor favor, insira pelo menos uma raça." << endl;
+                    cout << "\n";
+                    verificador = false;
+                }
+                else if (BuscarRaca(racas, tamanhoRaca, codigoAux) && codigo > 0) {
+                    cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+                    cout << "\n";
+                } else verificador = true;
+            } else {
+                cout << "\nEntrada inválida, digite apenas números inteiros." << endl;
                 cout << "\n";
-            } else verificador = true;
+                verificador = false;
+            }
         }
 
         cin.ignore();
 
         if (codigo > 0) {
-            racas[i].codigo = codigo;
+            racas[tamanhoRaca].codigo = codigo;
+
             cout << "Nome do raça: ";
-            cin.getline(racas[i].descricao, 50);
+            cin.getline(racas[tamanhoRaca].descricao, 50);
             cout<<"\n";
         } else saida = 0;
     }
-    tamanhoRaca = i-1;
+    tamanhoRaca = tamanhoRaca - 1;
 }
 
 void CadastrarAnimal(Animal animais[], int &tamanhoAnimal, Raca racas[], int tamanhoRaca, Tutor tutores[], int tamanhoTutor, Cidade cidades[], int tamanhoCidade) {
+
     system("cls");
+
     cout << "\t------Cadastrar Animais------ \n(Para finalizar os cadastros, digite 0 no campo código): "<<endl;
 
-    int i = 0;
     int codigo;
-    for (int saida = 1; saida !=0; i++) {
+    int codigoAux;
+    string entrada;
 
-        int codigoAux;
+    for (int saida = 1; saida !=0; tamanhoAnimal++) {
+
         bool verificador = false;
 
         while (!verificador) {
             cout<<"Código do animal: ";
-            cin>>codigo;
-            codigoAux = codigo;
-            if (BuscarAnimal(animais, tamanhoAnimal, codigoAux) && codigo > 0) {
-                cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+            cin>>entrada;
+            if (ForInteiro(entrada, codigo)) {
+                codigoAux = codigo;
+                if (BuscarAnimal(animais, tamanhoAnimal, codigoAux) && codigo > 0) {
+                    cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+                    cout << "\n";
+                } else verificador = true;
+            } else {
+                cout << "\nEntrada inválida, digite apenas números inteiros." << endl;
                 cout << "\n";
-            } else verificador = true;
+                verificador = false;
+            }
         }
 
         cin.ignore();
 
         if (codigo > 0) {
-            animais[i].codigo = codigo;
+            animais[tamanhoAnimal].codigo = codigo;
+
             cout << "Nome do animal: ";
-            cin.getline(animais[i].nome, 30);
+            cin.getline(animais[tamanhoAnimal].nome, 30);
 
             verificador = false;
 
@@ -391,14 +475,15 @@ void CadastrarAnimal(Animal animais[], int &tamanhoAnimal, Raca racas[], int tam
                 verificador = BuscarRaca(racas, tamanhoRaca, codigoAux);
                 if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
             }
-            animais[i].codigoRaca = racas[codigoAux].codigo;
+            animais[tamanhoAnimal].codigoRaca = racas[codigoAux].codigo;
+
             cout << "Raça: " << racas[codigoAux].descricao << endl;
 
             cout << "Idade do animal: ";
-            cin >> animais[i].idade;
+            cin >> animais[tamanhoAnimal].idade;
 
             cout << "Peso do animal: ";
-            cin >> animais[i].peso;
+            cin >> animais[tamanhoAnimal].peso;
 
             cin.ignore();
 
@@ -410,7 +495,8 @@ void CadastrarAnimal(Animal animais[], int &tamanhoAnimal, Raca racas[], int tam
                 verificador = BuscarTutor(tutores, tamanhoTutor, codigoAux);
                 if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
             }
-            animais[i].codigoTutor = tutores[codigoAux].codigo;
+            animais[tamanhoAnimal].codigoTutor = tutores[codigoAux].codigo;
+
             cout << "Tutor:  " << tutores[codigoAux].nome<<endl;
 
             verificador = false;
@@ -420,38 +506,46 @@ void CadastrarAnimal(Animal animais[], int &tamanhoAnimal, Raca racas[], int tam
                 verificador = BuscarCidade(cidades, tamanhoCidade, codigoAux);
             }
             cout << "Cidade: "<< cidades[codigoAux].nome<<endl;
-
             cout<<"\n";
         } else saida = 0;
     }
-    tamanhoAnimal = i-1;
+    tamanhoAnimal = tamanhoAnimal - 1;
 }
 
 void CadastrarConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario) {
+
     system("cls");
+
     cout << "\t------Registrar Consulta------ \n(Para finalizar os registros, digite 0 no campo código): "<<endl;
 
-    int i = 0;
     int codigo;
-    for (int saida = 1; saida !=0; i++) {
+    int codigoAux;
+    string entrada;
 
-        int codigoAux;
+    for (int saida = 1; saida !=0; tamanhoConsulta++) {
+
         bool verificador = false;
 
         while (!verificador) {
             cout<<"Código da consulta: ";
-            cin>>codigo;
-            codigoAux = codigo;
-            if (BuscarConsulta(consultas, tamanhoConsulta, codigoAux) && codigo > 0) {
-                cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+            cin>>entrada;
+            if (ForInteiro(entrada, codigo)) {
+                codigoAux = codigo;
+                if (BuscarConsulta(consultas, tamanhoConsulta, codigoAux) && codigo > 0) {
+                    cout << "\nCódigo já utilizado, por favor insira um código não utilizado." << endl;
+                    cout << "\n";
+                } else verificador = true;
+            } else {
+                cout << "\nEntrada inválida, digite apenas números inteiros." << endl;
                 cout << "\n";
-            } else verificador = true;
+                verificador = false;
+            }
         }
 
         cin.ignore();
 
         if (codigo > 0) {
-            consultas[i].codigo = codigo;
+            consultas[tamanhoConsulta].codigo = codigo;
 
             verificador = false;
 
@@ -461,7 +555,7 @@ void CadastrarConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animai
                 verificador = BuscarAnimal(animais, tamanhoAnimal, codigoAux);
                 if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
             }
-            consultas[i].codigoAnimal = animais[codigoAux].codigo;
+            consultas[tamanhoConsulta].codigoAnimal = animais[codigoAux].codigo;
 
             verificador = false;
 
@@ -471,121 +565,103 @@ void CadastrarConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animai
                 verificador = BuscarVeterinario(veterinarios, tamanhoVeterinario, codigoAux);
                 if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
             }
-            consultas[i].codigoVeterinario = veterinarios[codigoAux].codigo;
+            consultas[tamanhoConsulta].codigoVeterinario = veterinarios[codigoAux].codigo;
 
             cin.ignore();
 
-            cout << "Data da consulta (aaaa-mm- dd): ";
-            cin.getline(consultas[i].data, 12);
+            cout << "Data da consulta (aaaa-mm-dd): ";
+            cin.getline(consultas[tamanhoConsulta].data, 12);
 
             cout << "Valor: ";
-            cin >> consultas[i].valor;
-
+            cin >> consultas[tamanhoConsulta].valor;
             cout<<"\n";
-        }else saida = 0;
+        } else saida = 0;
     }
-    tamanhoConsulta = i-1;
+    tamanhoConsulta = tamanhoConsulta - 1;
 }
 
 bool BuscarCidade (Cidade cidades[], int tamanhoCidade, int &cod){
     int i = 0, f = tamanhoCidade;
     int m = (i + f) / 2;
     for (; f > i && cod != cidades[m].codigo; m = (i + f) / 2){
-        if (cod > cidades[m].codigo)
-            i = m + 1;
-        else
-            f = m - 1;
+        if (cod > cidades[m].codigo) i = m + 1;
+        else f = m - 1;
     }
     if (cod == cidades[m].codigo) {
         cod = m;
         return true;
-    }
-    else return false;
+    } else return false;
 }
 
 bool BuscarRaca (Raca racas[], int tamanhoraca, int &cod){
     int i = 0, f = tamanhoraca;
     int m = (i + f) / 2;
     for (; f > i && cod != racas[m].codigo; m = (i + f) / 2){
-        if (cod > racas[m].codigo)
-            i = m + 1;
-        else
-            f = m - 1;
+        if (cod > racas[m].codigo) i = m + 1;
+        else f = m - 1;
     }
     if (cod == racas[m].codigo) {
         cod = m;
         return true;
-    }
-    else return false;
+    } else return false;
 }
 
 bool BuscarTutor (Tutor tutores[], int tamanhoTutor, int &cod){
     int i = 0, f = tamanhoTutor;
     int m = (i + f) / 2;
     for (; f > i && cod != tutores[m].codigo; m = (i + f) / 2){
-        if (cod > tutores[m].codigo)
-            i = m + 1;
-        else
-            f = m - 1;
+        if (cod > tutores[m].codigo) i = m + 1;
+        else f = m - 1;
     }
     if (cod == tutores[m].codigo) {
         cod = m;
         return true;
-    }
-    else return false;
+    } else return false;
 }
 
 bool BuscarAnimal (Animal animais[], int tamanhoAnimal, int &cod) {
     int i = 0, f = tamanhoAnimal;
     int m = (i + f) / 2;
     for (; f > i && cod != animais[m].codigo; m = (i + f) / 2){
-        if (cod > animais[m].codigo)
-            i = m + 1;
-        else
-            f = m - 1;
+        if (cod > animais[m].codigo) i = m + 1;
+        else f = m - 1;
     }
     if (cod == animais[m].codigo) {
         cod = m;
         return true;
-    }
-    else return false;
+    } else return false;
 }
 
 bool BuscarVeterinario (Veterinario veterinarios[], int tamanhoVeterinario, int &cod) {
     int i = 0, f = tamanhoVeterinario;
     int m = (i + f) / 2;
     for (; f > i && cod != veterinarios[m].codigo; m = (i + f) / 2){
-        if (cod > veterinarios[m].codigo)
-            i = m + 1;
-        else
-            f = m - 1;
+        if (cod > veterinarios[m].codigo) i = m + 1;
+        else f = m - 1;
     }
     if (cod == veterinarios[m].codigo) {
         cod = m;
         return true;
-    }
-    else return false;
+    } else return false;
 }
 
 bool BuscarConsulta (Consulta consultas[], int tamanhoConsulta, int &cod) {
     int i = 0, f = tamanhoConsulta;
     int m = (i + f) / 2;
     for (; f > i && cod != consultas[m].codigo; m = (i + f) / 2){
-        if (cod > consultas[m].codigo)
-            i = m + 1;
-        else
-            f = m - 1;
+        if (cod > consultas[m].codigo) i = m + 1;
+        else f = m - 1;
     }
     if (cod == consultas[m].codigo) {
         return true;
-    }
-    else return false;
+    } else return false;
 }
 
 void InserirTutor (Tutor tutores[], int &tamanhoTutor, Tutor inserirTutores[], int tamanhoInserirTutor, Tutor tutoresAtualizada[], int &tamanhoAtualizadaTutor){
     int i = 0, j = 0, k = 0;
     for (;i < tamanhoTutor && j < tamanhoInserirTutor;k++){
         if (tutores[i].codigo < inserirTutores[j].codigo){
+
             tutoresAtualizada[k].codigo = tutores[i].codigo;
             strcpy (tutoresAtualizada[k].nome,tutores[i].nome);
             strcpy (tutoresAtualizada[k].cpf,tutores[i].cpf);
@@ -638,6 +714,7 @@ void InserirAnimais(Animal animais[], int &tamanhoAnimal, Animal inserirAnimal[]
     int i = 0, j = 0, k = 0;
     for (; i < tamanhoAnimal && j < tamanhoInserirAnimal; k++) {
         if (animais[i].codigo < inserirAnimal[j].codigo) {
+
             animaisAtualizada[k].codigo = animais[i].codigo;
             strcpy (animaisAtualizada[k].nome,animais[i].nome);
             animaisAtualizada[k].codigoRaca = animais[i].codigoRaca;
@@ -691,13 +768,16 @@ void InserirAnimais(Animal animais[], int &tamanhoAnimal, Animal inserirAnimal[]
 }
 
 void InserirConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario, Raca racas[], int tamanhoRaca, Cidade cidades[], int tamanhoCidade, Tutor tutores[], int tamanhoTutor) {
+
     system("cls");
+
     cout << "\t------Registrar Consulta------ \n";
-    if (tamanhoConsulta == 0) {
-        consultas[tamanhoConsulta].codigo = 1;
-    } else {
-        consultas[tamanhoConsulta].codigo = consultas[tamanhoConsulta - 1].codigo + 1;
-    }
+
+    if (tamanhoConsulta == 0) consultas[tamanhoConsulta].codigo = 1;
+    else consultas[tamanhoConsulta].codigo = consultas[tamanhoConsulta - 1].codigo + 1;
+
+
+    cout << "Código da consulta: " << consultas[tamanhoConsulta].codigo << endl;
 
     int codigoAux;
     bool verificador = false;
@@ -706,6 +786,7 @@ void InserirConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animais[
         cout << "Código do animal: ";
         cin>>codigoAux;
         verificador = BuscarAnimal(animais, tamanhoAnimal, codigoAux);
+        if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
     }
     consultas[tamanhoConsulta].codigoAnimal = animais[codigoAux].codigo;
 
@@ -734,6 +815,7 @@ void InserirConsulta(Consulta consultas[], int &tamanhoConsulta, Animal animais[
         cout << "Código do veterinário: ";
         cin>>codigoAux;
         verificador = BuscarVeterinario(veterinarios, tamanhoVeterinario, codigoAux);
+        if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
     }
     consultas[tamanhoConsulta].codigoVeterinario = veterinarios[codigoAux].codigo;
 
@@ -762,6 +844,8 @@ void PesquisarConsultaPorData(Consulta consultas[], int tamanhoConsulta, Animal 
 
     system("cls");
 
+    cout << "\t------Buscando consultas------ \n";
+
     char dataInicio[12], dataFinal[12];
     float somaConsultas = 0;
 
@@ -776,7 +860,8 @@ void PesquisarConsultaPorData(Consulta consultas[], int tamanhoConsulta, Animal 
     for (int i = 0; i < tamanhoConsulta; i++) {
         if (strcmp(consultas[i].data, dataInicio) >= 0 && strcmp(consultas[i].data, dataFinal) <= 0) {
 
-            cout << "\n\t------Dados da Consulta " << i + 1 << "------\n";
+            cout << "\n\t------Dados da Consulta " << consultas[i].codigo << "------\n";
+
             int codigoAux =  consultas[i].codigoAnimal;
             BuscarAnimal(animais, tamanhoAnimal, codigoAux);
             cout << "Nome do animal: " << animais[codigoAux].nome << endl;
@@ -790,13 +875,70 @@ void PesquisarConsultaPorData(Consulta consultas[], int tamanhoConsulta, Animal 
             somaConsultas += consultas[i].valor;
         }
     }
-    cout << "Valor total das consultas nesse periodo de " << dataInicio << " até " << dataFinal << " é de R$" << somaConsultas << "." << endl;
+    if (somaConsultas > 0) cout << "\nValor total das consultas nesse periodo de " << dataInicio << " até " << dataFinal << " é de R$" << somaConsultas << "." << endl;
+    else cout << "\nNão há consultas nesse intervalo de datas: " << dataInicio << " até " << dataFinal;
+
+    cout << "\nClique ENTER para voltar ao menu.";
+    _getch();
+}
+
+void PesquisarConsultaPorVeterinarioEData(Consulta consultas[], int tamanhoConsulta, Animal animais[], int tamanhoAnimal, Veterinario veterinarios[], int tamanhoVeterinario) {
+
+    system("cls");
+
+    cout << "\t------Buscando consultas de Veterinário------ \n";
+
+    char dataInicio[12], dataFinal[12];
+    float somaConsultas = 0;
+    bool verificador = false;
+    int codigoVet;
+
+    while (!verificador) {
+        cout << "Código do veterinário: ";
+        cin>>codigoVet;
+        verificador = BuscarVeterinario(veterinarios, tamanhoVeterinario, codigoVet);
+        if (!verificador) cout << "\nCódigo inválido, insira um código válido.\n";
+    }
+
+    cin.ignore();
+
+    cout << "Data de inicio (aaaa-mm-dd): ";
+    cin.getline(dataInicio, 12);
+
+    cout << "Data de final (aaaa-mm-dd): ";
+    cin.getline(dataFinal, 12);
+
+    for (int i = 0; i < tamanhoConsulta; i++) {
+        if (codigoVet == veterinarios[i].codigo) {
+
+            if (strcmp(consultas[i].data, dataInicio) >= 0 && strcmp(consultas[i].data, dataFinal) <= 0) {
+
+                cout << "\n\t------Dados da Consulta " << consultas[i].codigo << "------\n";
+
+                int codigoAux =  consultas[i].codigoAnimal;
+                BuscarAnimal(animais, tamanhoAnimal, codigoAux);
+                cout << "Nome do animal: " << animais[codigoAux].nome << endl;
+
+                cout << "Nome do veterinário: " << veterinarios[codigoVet].nome << endl;
+
+                cout << "Data da Consulta: " <<  consultas[i].data << endl;
+                cout << "Valor R$" <<  consultas[i].valor << endl;
+                somaConsultas += consultas[i].valor;
+            }
+        }
+    }
+    if (somaConsultas > 0) cout << "\nValor total das consultas nesse periodo de " << dataInicio << " até " << dataFinal << " é de R$" << somaConsultas << "." << endl;
+    else cout << "\nNão há consultas nesse intervalo de datas: " << dataInicio << " até " << dataFinal;
+
+    cout << "\n\nClique ENTER para voltar ao menu.";
     _getch();
 }
 
 bool ValidarCpf(char cpf[]) {
+    //verifica se possui 11 caracter
     if (strlen(cpf) != 11) return false;
 
+    //verifica se todos os numero sao iguais
     bool todosIguais = true;
     int p= 1;
     while (todosIguais && p < 11) {
@@ -805,6 +947,14 @@ bool ValidarCpf(char cpf[]) {
     }
     if (todosIguais) return false;
 
+    // Verifica se todos os caracteres sao dígitos numericos
+    for (int i = 0; i < 11; i++) {
+        if (!isdigit(cpf[i])) {
+            return false;
+        }
+    }
+
+    //Verifica primeiro digito
     int cont = 10, soma = 0, i = 0;
     for (; cont >= 2; cont--) {
         soma += (cpf[i] - '0') * (cont);
@@ -819,6 +969,7 @@ bool ValidarCpf(char cpf[]) {
         return false;
     }
 
+    //verifica segundo digito
     cont = 11, soma = 0, i = 0;
     for (; cont >= 2; cont--) {
         soma += (cpf[i] - '0') * (cont);
@@ -832,5 +983,19 @@ bool ValidarCpf(char cpf[]) {
     if ((cpf[10] - '0') != digito2) {
         return false;
     }
+    return true;
+}
+
+bool ForInteiro(string dado, int &codigo) {
+    //verifica se o campo está vazio
+    if (dado.empty()) return false;
+    int i = 0;
+    //verifica se tem somente numeros
+    for (; i < dado.size(); ++i) {
+        if (!std::isdigit(dado[i])) return false;
+    }
+    //transforma string em numeros inteiros
+    stringstream ss(dado);
+    ss >> codigo;
     return true;
 }
