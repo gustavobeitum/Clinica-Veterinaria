@@ -175,8 +175,6 @@ int main() {
             case 6: {
                 system("cls");
                 cout << "Saindo do programa...\n";
-                Sleep(2000);
-                exit(0);
                 break;
             }
 
@@ -758,6 +756,7 @@ void InserirAnimais(Animal animais[], int &tamanhoAnimal, Animal inserirAnimal[]
     i = 0;
     while (i < tamanhoAtualizadaAnimal) {
         animais[i].codigo = animaisAtualizada[i].codigo;
+        strcpy (animaisAtualizada[i].nome,inserirAnimal[i].nome);
         animais[i].codigoRaca = animaisAtualizada[i].codigoRaca;
         animais[i].idade = animaisAtualizada[i].idade;
         animais[i].peso = animaisAtualizada[i].peso;
