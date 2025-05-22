@@ -101,11 +101,18 @@ int main() {
 
     int tamanhoAnimal = 0;
     Animal animais[max];
-	CadastrarAnimal(animais, tamanhoAnimal, racas, tamanhoRaca, tutores, tamanhoTutor, cidades, tamanhoCidade);
+    if (tamanhoTutor > 0) CadastrarAnimal(animais, tamanhoAnimal, racas, tamanhoRaca, tutores, tamanhoTutor, cidades, tamanhoCidade);
+    else {
+        system("cls");
+        cout << "Impossível cadastrar um animal e uma consulta agora, aguarde o menu para inserir um tutor primeiro!!" << endl;
+
+        cout << "\n\nClique ENTER para continuar.";
+        _getch();
+    }
 
     int tamanhoConsulta = 0;
     Consulta consultas[max];
-	CadastrarConsulta(consultas, tamanhoConsulta, animais, tamanhoAnimal, veterinarios, tamanhoVeterinario);
+    if (tamanhoAnimal > 0) CadastrarConsulta(consultas, tamanhoConsulta, animais, tamanhoAnimal, veterinarios, tamanhoVeterinario);
     /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
     int opcao = 0;
@@ -756,7 +763,7 @@ void InserirAnimais(Animal animais[], int &tamanhoAnimal, Animal inserirAnimal[]
     i = 0;
     while (i < tamanhoAtualizadaAnimal) {
         animais[i].codigo = animaisAtualizada[i].codigo;
-        strcpy (animaisAtualizada[i].nome,inserirAnimal[i].nome);
+        strcpy (animais[i].nome,animaisAtualizada[i].nome);
         animais[i].codigoRaca = animaisAtualizada[i].codigoRaca;
         animais[i].idade = animaisAtualizada[i].idade;
         animais[i].peso = animaisAtualizada[i].peso;
@@ -871,6 +878,7 @@ void PesquisarConsultaPorData(Consulta consultas[], int tamanhoConsulta, Animal 
 
             cout << "Data da Consulta: " <<  consultas[i].data << endl;
             cout << "Valor R$" <<  consultas[i].valor << endl;
+
             somaConsultas += consultas[i].valor;
         }
     }
